@@ -1,0 +1,9 @@
+h2 {
+	width : 100%;
+	display: inline-block;
+	text-align : center;
+}
+canvas {
+	display: block;
+    margin: 0 auto;
+}
