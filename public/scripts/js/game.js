@@ -4,7 +4,9 @@ define([], function() {
 		this.width  = params.width  || 800;
 		this.height = params.height || 600;
 
-		this.renderer = new PIXI.WebGLRenderer(1024, 768);
+		//Création du renderer et du stage
+		this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
+		this.stage = new PIXI.Stage(0xAAAAAA);
 	}
 
 	return Game;
