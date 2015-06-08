@@ -1,4 +1,5 @@
 define([], function() {
+<<<<<<< HEAD
 	function Player(pParams) {
 		var params = pParams ||{};
 		this.id = params.id || 0;
@@ -70,4 +71,13 @@ define([], function() {
 	}
 
 	return Player;
+=======
+    function Player(pParams) {
+        var params = pParams ||{};
+        this.x = params.x || 120;
+        this.y = params.y || 240;
+        this.sprite = params.sprite || {};
+    }
+    return Player;
+>>>>>>> origin/master
 })
