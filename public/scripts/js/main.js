@@ -3,36 +3,34 @@ require.config({
     urlArgs: "bust=" + (new Date()).getTime()
 })
 
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
 require(['game', 'player'], function(Game, Player) {
-	var assetsToLoad = [
-		"assets/sprites/player.png"
-	]
-	var loader = new PIXI.AssetLoader(assetsToLoad);
-	loader.load();
-	loader.onProgress = function() {
-		this.filesCount = this.filesCount || 0;
-		this.filesCount++;
-		console.log('Files loaded : '+this.filesCount);
-	}
-	loader.onComplete = init;
 
-	var game, player;
-	function init() {
-		game = new Game({
-			width  : 1024,
-			height : 768
-		});
-		player = new Player({
-			sprite : new PIXI.Sprite(PIXI.Texture.fromImage("assets/sprites/player.png"))
-		});
-		document.body.appendChild(game.renderer.view);
-		game.stage.addChild(player.sprite);
-		gameLoop();
-	}
+    var game,
+        player,
+        players = [];
 
-	function gameLoop() {
-		game.renderer.render(game.stage);
-		setTimeout(gameLoop, 17);
+    init();
+
+    function init() {
+        game = new Game({
+            width  : 1024,
+            height : 768
+        });
+        player = new Player();
+        gameLoop();
+    }
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, game.width, game.height);
+
+        player.draw();
+        setTimeout(gameLoop, 30);
 	}
+    window.addEventListener("keydown", function() {
+        player.x++;
+    })
 	
 })();
