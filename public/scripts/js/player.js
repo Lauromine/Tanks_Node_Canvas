@@ -1,5 +1,4 @@
 define([], function() {
-<<<<<<< HEAD
 	function Player(pParams) {
 		var params = pParams ||{};
 		this.id = params.id || 0;
@@ -35,15 +34,15 @@ define([], function() {
 		ctx.lineWidth   = turretRadius/5;
 		ctx.beginPath();
 		//ctx.arc(this.x + this.width/2, this.y + this.height/2, turretRadius, 0, 2 * Math.PI, false);
-		ctx.arc(-this.width/2, -this.height/2, turretRadius, 0, 2 * Math.PI, false);
+		ctx.arc(0, 0, turretRadius, 0, 2 * Math.PI, false);
 		ctx.closePath();
 		ctx.stroke();
 
 		var canonWidth  = 100;
 		var canonHeight =  10;
-		ctx.fillRect(this.x + this.width - canonWidth/2, this.y + this.height/2 - canonHeight/2, canonWidth, canonHeight);
+		ctx.fillRect(0, 0 - canonHeight/2, canonWidth, canonHeight);
 		ctx.lineWidth = turretRadius/10;
-		ctx.strokeRect(this.x + this.width - canonWidth/2, this.y + this.height/2 - canonHeight/2, canonWidth, canonHeight);
+		ctx.strokeRect(0, 0 - canonHeight/2, canonWidth, canonHeight);
 
 		ctx.fill();
 	}
@@ -71,13 +70,4 @@ define([], function() {
 	}
 
 	return Player;
-=======
-    function Player(pParams) {
-        var params = pParams ||{};
-        this.x = params.x || 120;
-        this.y = params.y || 240;
-        this.sprite = params.sprite || {};
-    }
-    return Player;
->>>>>>> origin/master
 })
