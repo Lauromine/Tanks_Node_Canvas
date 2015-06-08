@@ -4,6 +4,7 @@ require.config({
 })
 
 require(['game', 'player'], function(Game, Player) {
+    var Id;
     var assetsToLoad = [
         "assets/sprites/player.png"
     ]
@@ -17,7 +18,16 @@ require(['game', 'player'], function(Game, Player) {
     loader.onComplete = waitServerRespond;
 
     function waitServerRespond() {
-        socket.on("connexionOk", function(){
+        var socket = io();
+        socket.on("connexionOk", function(pId){
+            Id = pId;
+            console.log("connexionOk");
+            
+            socket.on("newPlayerJoin", function(){
+                console.log("a new player join the server");
+            })
+
+
             init();
         });
     }
