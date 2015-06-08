@@ -7,6 +7,7 @@ define([], function() {
 		this.width  = params.width  || 150;
 		this.height = params.height || 75;
 		this.color  = params.color || 'rgb(255, 64, 0)';
+		this.rotation =  0; //degrees
 
 		this.sprite = params.sprite;
 		this.turret = null;
@@ -16,7 +17,7 @@ define([], function() {
 	
 	Player.prototype.draw = function() {
 		ctx.save();
-		this.rotate(20);
+		this.rotate(this.rotation);
 
 		ctx.fillStyle = this.color;
 		//ctx.fillRect(this.x, this.y, this.width, this.height);

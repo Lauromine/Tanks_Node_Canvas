@@ -45,8 +45,9 @@ require(['game', 'player'], function(Game, Player) {
         player.draw();
         setTimeout(gameLoop, 30);
 	}
-    window.addEventListener("keydown", function() {
-        player.x++;
+    window.addEventListener("keydown", function(pEvent) {
+        if(pEvent.keyCode == 37) player.rotation--;
+        else if (pEvent.keyCode == 39) player.rotation++;
     })
 
 })();
