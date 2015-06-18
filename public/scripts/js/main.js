@@ -43,24 +43,39 @@ require(['game', 'player'], function(Game, Player) {
     function gameLoop() {
         ctx.clearRect(0, 0, game.width, game.height);
 
-        player.draw();
+        
 
         for(shoot of shoots) {
             shoot.doAction();
             shoot.draw();
+            console.log(shoot.x, shoot.y)
         }
 
+        player.draw();
         setTimeout(gameLoop, 25);
 	}
 
     window.addEventListener("keydown", function(pEvent) {
-        pEvent.preventDefault();
+        var keyCodesToPrevent = [32, 37, 38, 39, 40];
+        if(keyCodesToPrevent.indexOf(pEvent.keyCode) != -1) {
+            pEvent.preventDefault();
+        }
+        
 
-        if(pEvent.keyCode == 37) player.rotation += player.rotationSpeed;
-        else if (pEvent.keyCode == 39) player.rotation -= player.rotationSpeed;
+        if(pEvent.keyCode == 37) player.rotation -= player.rotationSpeed;
+        else if (pEvent.keyCode == 39) player.rotation += player.rotationSpeed;
 
-        if(pEvent.keyCode == 38) player.turretRotation += player.turretSpeed;
-        else if(pEvent.keyCode == 40) player.turretRotation -= player.turretSpeed;
+        if(pEvent.ctrlKey) {
+            if(pEvent.keyCode == 38) player.turretRotation += player.turretSpeed;
+            else if(pEvent.keyCode == 40) player.turretRotation -= player.turretSpeed;
+        } else {
+            if(pEvent.keyCode == 38) player.move(true);
+            else if(pEvent.keyCode == 40) player.move(false);
+        }
+        
+
+        /*if(pEvent.keyCode == 38) player.turretRotation += player.turretSpeed;
+        else if(pEvent.keyCode == 40) player.turretRotation -= player.turretSpeed;*/
 
         if(pEvent.keyCode == 32) player.shoot();
     })

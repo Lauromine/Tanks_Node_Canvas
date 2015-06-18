@@ -9,12 +9,16 @@ define(['shoot'], function(Shoot) {
 
 		this.color  = params.color || 'rgb(255, 204, 64)';
 
+		this.speed = {x:5, y:5};
 
 		this.rotation =  0; //degrees
 		this.rotationSpeed = 5;
 
 		this.turretRotation = 0; //degrees
-		this.turretSpeed = 5;
+		this.turretSpeed    = 5;
+
+		this.canonWidth  = 100;
+		this.canonHeight =  10;
 
 		this.controller = null;
 
@@ -26,10 +30,10 @@ define(['shoot'], function(Shoot) {
 		this.rotate(this.rotation);
 
 		ctx.fillStyle = this.color;
-		//ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.fillRect( -this.width/2, -this.height/2, this.width,this.height);
 
 		ctx.fillStyle = 'grey';
+		//Rectangles gris sur la caisse
 		ctx.fillRect(-this.width/2, -this.height/3, this.width/2, this.height/1.5);
 		ctx.fillRect(this.width/2 - 50, -this.height/4, this.width/3, this.height/2);
 		this.drawTurret();
@@ -41,6 +45,7 @@ define(['shoot'], function(Shoot) {
 		ctx.fillStyle   = this.color;
 		ctx.strokeStyle = 'green';
 
+		//Dessin de la tourelle
 		var turretRadius = 30;
 		ctx.lineWidth   = turretRadius/5;
 		ctx.beginPath();
@@ -49,20 +54,26 @@ define(['shoot'], function(Shoot) {
 		ctx.closePath();
 		ctx.stroke();
 
-		var canonWidth  = 100;
-		var canonHeight =  10;
-
+		//Dessin du canon
 		this.rotateTurret(this.turretRotation);
-		ctx.fillRect(0, 0 - canonHeight/2, canonWidth, canonHeight);
+		ctx.fillRect(0, 0 - this.canonHeight/2, this.canonWidth, this.canonHeight);
 		ctx.lineWidth = turretRadius/10;
-		ctx.strokeRect(0, 0 - canonHeight/2, canonWidth, canonHeight);
+		ctx.strokeRect(0, 0 - this.canonHeight/2, this.canonWidth, this.canonHeight);
 
 		ctx.fill();
 	}
 
-	Player.prototype.move = function(pX, pY) {
-		this.x = pX;
-		this.y = pY;
+	Player.prototype.move = function(isGoingForward) {
+		var angleInRad = this.rotation*Math.PI/180;
+
+		if(isGoingForward) {
+			this.x += Math.cos(angleInRad) * this.speed.x;
+			this.y += Math.sin(angleInRad) * this.speed.y;
+		} else {
+			this.x -= Math.cos(angleInRad) * this.speed.x;
+			this.y -= Math.sin(angleInRad) * this.speed.y;
+		}
+		
 	}
 
 	Player.prototype.rotate = function(pAngle) {
@@ -85,12 +96,18 @@ define(['shoot'], function(Shoot) {
 
 	Player.prototype.shoot = function() {
 		var shootAngle = this.rotation + this.turretRotation;
+		var angleInRad = shootAngle * Math.PI/180;
 
 		var shoot = new Shoot({
+			x: this.x + this.width/2,
+			y: this.y + this.height/2,
 			shootArray: this.shootArray,
-			speed: {x:10, y:10}
+			speed: {
+				x: Math.cos(angleInRad),
+				y: Math.sin(angleInRad)
+			},
+			color : this.color
 		});
-		console.log('shoot');
 	}
 
 	return Player;
