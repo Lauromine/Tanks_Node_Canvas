@@ -9,7 +9,8 @@ var ctx = canvas.getContext("2d");
 require(['game', 'player'], function(Game, Player) {
     var game,
         player,
-        players = [];
+        players = [],
+        shoots = [];
 
     init();
 
@@ -43,7 +44,7 @@ require(['game', 'player'], function(Game, Player) {
             width  : 1024,
             height : 768
         });
-        player = new Player();
+        player = new Player({shootArray: shoots});
         gameLoop();
     }
 
@@ -51,24 +52,22 @@ require(['game', 'player'], function(Game, Player) {
         ctx.clearRect(0, 0, game.width, game.height);
 
         player.draw();
+        for(shoot of shoots) {
+            shoot.doAction();
+            shoot.draw();
+        }
+
         timeout = setTimeout(gameLoop, 30);
-	}
+	    window.addEventListener("keydown", function(pEvent) {
+            pEvent.preventDefault();
 
-    function stopGameLoop() {
-        window.clearTimeout(timeout);
+            if(pEvent.keyCode == 37) player.rotation += player.rotationSpeed;
+            else if (pEvent.keyCode == 39) player.rotation -= player.rotationSpeed;
+
+            if(pEvent.keyCode == 38) player.turretRotation += player.turretSpeed;
+            else if(pEvent.keyCode == 40) player.turretRotation -= player.turretSpeed;
+
+            if(pEvent.keyCode == 32) player.shoot();
+        });
     }
-
-    function destroy() {
-        stopGameLoop();
-        game = null;
-        player = null;
-    }
-
-    window.addEventListener("keydown", function(pEvent) {
-        if(pEvent.keyCode == 37) player.rotation--;
-        else if (pEvent.keyCode == 39) player.rotation++;
-    });
-
-
-
 })();
