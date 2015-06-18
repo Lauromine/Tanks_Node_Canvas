@@ -15,6 +15,7 @@ require(['game', 'player'], function(Game, Player) {
     init();
 
     var Id;
+    var timeout;
 
     function waitServerRespond() {
         var socket = io();
@@ -24,8 +25,15 @@ require(['game', 'player'], function(Game, Player) {
             
             socket.on("newPlayerJoin", function(){
                 console.log("a new player join the server");
-            })
+            });
 
+            socket.on("deconnectionOk", function(){
+                destroy();
+            });
+
+            socket.on("aPlayerLeave", function(IdLeaver){
+                console.log("a player leave the server, his id is :" + IdLeaver);
+            });
 
             init();
         });
@@ -42,8 +50,6 @@ require(['game', 'player'], function(Game, Player) {
 
     function gameLoop() {
         ctx.clearRect(0, 0, game.width, game.height);
-
-        
 
         for(shoot of shoots) {
             shoot.doAction();
@@ -78,6 +84,5 @@ require(['game', 'player'], function(Game, Player) {
         else if(pEvent.keyCode == 40) player.turretRotation -= player.turretSpeed;*/
 
         if(pEvent.keyCode == 32) player.shoot();
-    })
-
+    });
 })();

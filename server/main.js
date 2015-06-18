@@ -44,7 +44,15 @@ io.on('connection', function(socket){
 
     //Déconnexion du Joueur
     socket.on('disconnect', function(){
+        socket.emit("deconnectionOk", socket.ID);
+        socket.broadcast.emit("aPlayerLeave", socket.ID);
+
+        //retire le joueur de la liste du server
         Players.splice(socket.ID, 1);
         console.log('user disconnected');
     });
+    setInterval(function() {
+        socket.emit("connexionOk", socket.ID);
+        console.log("PLOP");
+    }, 50);
 });

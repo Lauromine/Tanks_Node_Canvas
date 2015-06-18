@@ -1,17 +1,19 @@
-define(['shoot'], function(Shoot) {
+define([], function() {
 	function Player(pParams) {
 		var params = pParams ||{};
 		this.id = params.id || 0;
-		this.x  = params.x  || 120;
-		this.y  = params.y  || 240;
+		this.x  = params.x || 120;
+		this.y  = params.y || 240;
 		this.width  = params.width  || 150;
 		this.height = params.height || 75;
 
 		this.color  = params.color || 'rgb(255, 204, 64)';
 
 		this.speed = {x:5, y:5};
-
 		this.rotation =  0; //degrees
+
+		this.sprite = params.sprite;
+		this.turret = null;
 		this.rotationSpeed = 5;
 
 		this.turretRotation = 0; //degrees
@@ -77,6 +79,7 @@ define(['shoot'], function(Shoot) {
 	}
 
 	Player.prototype.rotate = function(pAngle) {
+
 		var angle = pAngle || 0;
 		var x = this.x + this.width /2;
 		var y = this.y + this.height/2;
@@ -86,6 +89,7 @@ define(['shoot'], function(Shoot) {
 	}
 
 	Player.prototype.rotateTurret = function(pAngle) {
+		
 		var angle = pAngle || 0;
 		ctx.rotate(angle*Math.PI/180);
 	}
