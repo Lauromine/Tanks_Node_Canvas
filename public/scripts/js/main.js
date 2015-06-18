@@ -1,10 +1,11 @@
+'use strict';
 //Code client
 require.config({
-    urlArgs: "bust=" + (new Date()).getTime()
-})
+    urlArgs: 'bust=' + (new Date()).getTime()
+});
 
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
 
 require(['game', 'player'], function(Game, Player) {
     var game,
@@ -19,20 +20,20 @@ require(['game', 'player'], function(Game, Player) {
 
     function waitServerRespond() {
         var socket = io();
-        socket.on("connexionOk", function(pId){
+        socket.on('connexionOk', function(pId){
             Id = pId;
-            console.log("connexionOk");
+            console.log('connexionOk');
             
-            socket.on("newPlayerJoin", function(){
-                console.log("a new player join the server");
+            socket.on('newPlayerJoin', function(){
+                console.log('a new player join the server');
             });
 
-            socket.on("deconnectionOk", function(){
+            socket.on('deconnectionOk', function(){
                 destroy();
             });
 
-            socket.on("aPlayerLeave", function(IdLeaver){
-                console.log("a player leave the server, his id is :" + IdLeaver);
+            socket.on('aPlayerLeave', function(IdLeaver){
+                console.log('a player leave the server, his id is :' + IdLeaver);
             });
 
             init();
@@ -51,17 +52,17 @@ require(['game', 'player'], function(Game, Player) {
     function gameLoop() {
         ctx.clearRect(0, 0, game.width, game.height);
 
-        for(shoot of shoots) {
+        for(var shoot of shoots) {
             shoot.doAction();
             shoot.draw();
-            console.log(shoot.x, shoot.y)
+            console.log(shoot.x, shoot.y);
         }
 
         player.draw();
         setTimeout(gameLoop, 25);
 	}
 
-    window.addEventListener("keydown", function(pEvent) {
+    window.addEventListener('keydown', function(pEvent) {
         var keyCodesToPrevent = [32, 37, 38, 39, 40];
         if(keyCodesToPrevent.indexOf(pEvent.keyCode) != -1) {
             pEvent.preventDefault();

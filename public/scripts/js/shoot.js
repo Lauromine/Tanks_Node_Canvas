@@ -1,5 +1,7 @@
+'use strict';
+
 define([], function() {
-	function Shoot(pParams) {
+	function Shoot (pParams) {
 		var params = pParams ||{};
 		this.x = params.x || 120;
 		this.y = params.y || 240;
@@ -22,29 +24,29 @@ define([], function() {
 	}
 
 	Shoot.prototype.draw = function() {
-		this.lifeCounter++
-		if(this.lifeCounter >= this.lifeSpan) this.destroy();
+		this.lifeCounter++;
+		if (this.lifeCounter >= this.lifeSpan) this.destroy();
 
 		ctx.fillStyle = 'rgb(255, 0, 0)';
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
 		ctx.closePath();
 		ctx.fill();
-	}
+	};
 
-	Shoot.prototype.move = function() {
+    Shoot.prototype.move = function () {
 		this.x += this.speed.x;
 		this.y += this.speed.y;
-	}
+	};
 
-	Shoot.prototype.doAction = function() {
+	Shoot.prototype.doAction = function () {
 		console.log('doAction');
 		this.move();
-	}
+	};
 
-	Shoot.prototype.destroy = function() {
-		console.log('destroy')
+	Shoot.prototype.destroy = function () {
+		console.log('destroy');
 		this.shootArray.splice(this.shootArray.indexOf(this), 1);
-	}
+	};
 	return Shoot;
 });

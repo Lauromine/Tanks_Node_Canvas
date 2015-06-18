@@ -1,5 +1,7 @@
+"use strict";
+
 define([], function() {
-	function TurretController() {
+	function TurretController () {
 
 	}
 
