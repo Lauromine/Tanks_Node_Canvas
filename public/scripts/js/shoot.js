@@ -1,11 +1,15 @@
 'use strict';
-
+/*
+* @author : Benjamin
+*/
 define([], function() {
 	function Shoot (pParams) {
 		var params = pParams ||{};
 		this.x = params.x || 120;
 		this.y = params.y || 240;
 		this.color = params.color || 'red';
+
+        this.playerId = params.playerId || 0;
 
 		var speedFactor = 10;
 		this.speed = {
@@ -19,8 +23,6 @@ define([], function() {
 		this.lifeCounter = 0;
 
 		this.shootArray = params.shootArray || null;
-		this.shootArray.push(this);
-
 	}
 
 	Shoot.prototype.draw = function() {
@@ -40,7 +42,6 @@ define([], function() {
 	};
 
 	Shoot.prototype.doAction = function () {
-		console.log('doAction');
 		this.move();
 	};
 

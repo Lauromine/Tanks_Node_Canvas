@@ -1,5 +1,7 @@
 'use strict';
-/*global canvas*/
+/*
+* @author : Benjamin
+*/
 define([], function() {
 	function Game (pParams) {
 		var params  = pParams ||{};

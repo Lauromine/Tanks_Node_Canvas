@@ -3,7 +3,34 @@ h2 {
 	display: inline-block;
 	text-align : center;
 }
-canvas {
+canvas, #infos_div {
 	display: block;
     margin: 0 auto;
+}
+
+canvas {
+	margin-top: 50px;
+}
+
+#infos_div {
+	border : 2px solid black;
+	width: 80%;
+	left: 10%;
+	height : 40px;
+	overflow: hidden;
+	position : absolute;
+	margin-bottom: 4px;
+
+	background-color: lightblue;
+
+	transition: height 1s;
+	transition-delay : 0.5s;
+}
+#infos_div:hover {
+	height: 300px;
+}
+
+#infos_div h4 {
+	margin-top: 10px;
+	text-align: center;
 }

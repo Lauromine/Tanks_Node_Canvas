@@ -1,29 +1,39 @@
 'use strict';
-define(['shoot'], function (Shoot) {
+/*global textLog */
+/*
+* @author : Benjamin
+*/
+define(['shoot', 'tankController', 'turretController'], function (Shoot, TankController, TurretController) {
     function Player (pParams) {
         var params = pParams || {};
         this.id = params.id || 0;
+        this.name = params.name || 'Player' + this.id;
         this.x  = params.x || 120;
         this.y  = params.y || 240;
         this.height = params.height || 75;
         this.width  = params.width  || 150;
-
         this.color  = params.color || 'rgb(255, 204, 64)';
 
         this.speed = {x: 5, y: 5};
-        this.rotation =  0; //degrees
+        this.rotation =  params.rotation || 0; //degrees
 
         this.sprite = params.sprite;
         this.turret = null;
         this.rotationSpeed = 5;
 
-        this.turretRotation = 0; //degrees 
+        this.turretRotation = params.turretRotation || 0; //degrees 
         this.turretSpeed    = 5;
         this.canonWidth  = 100;
         this.canonHeight =  10;
-        this.controller = null;
+        this.controller  = null;
 
-        this.shootArray = params.shootArray || null;
+        //Références aux tableaux
+        this.shootArray = params.shootArray || [];
+        this.players    = params.playersArray || [];
+
+        //Points de vie du tank
+        this.hitPoints = 5;
+        //Quand reçoit l'info de quelle 'place' le joueur occupe > initController() avec turret ou tank en paramètre + id
     }
 
     Player.prototype.draw = function () {
@@ -91,15 +101,22 @@ define(['shoot'], function (Shoot) {
         ctx.rotate(angle * Math.PI / 180);
     };
 
-    /*Player.prototype.init = function() {
+    Player.prototype.initController = function(pRole, pId) {
+        if(pRole === 'tank') {
+            this.controller = new TankController({id: pId, players: this.players});
+        } else {
+            this.controller = new TurretController({id: pId, players: this.players});
+        }
 
-    };*/
+        this.controller.addInputsListeners();
+    };
 
     Player.prototype.shoot = function () {
         var shootAngle = this.rotation + this.turretRotation;
         var angleInRad = shootAngle * Math.PI / 180;
 
         var shoot = new Shoot({
+            playerId : this.id,
             x: this.x + this.width  / 2,
             y: this.y + this.height / 2,
             shootArray: this.shootArray,
@@ -107,8 +124,24 @@ define(['shoot'], function (Shoot) {
                 x: Math.cos(angleInRad),
                 y: Math.sin(angleInRad)
             },
-            color : this.color
+            color : 'green'
         });
+
+        this.shootArray.push(shoot);
+    };
+
+    Player.prototype.onHit = function(pEnemy) {
+        this.hitPoints--;
+        if(this.hitPoints <= 0) {
+            textLog.push({msg: pEnemy.name + ' killed ' + this.name, color: 'red'});
+            this.destroy();
+
+            //++ Envoyer message + mort du joueur au serveur pour le transmettre aux autres joueurs
+        }
+    };
+
+    Player.prototype.destroy = function() {
+        this.players.splice(this.players.indexOf(this), 1);
     };
 
     return Player;
