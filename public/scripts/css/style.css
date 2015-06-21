@@ -18,7 +18,8 @@ canvas {
 }
 
 #infos_div {
-	border : 2px solid black;
+	border : 2px solid orange;
+    border-radius: 10px;
 	width: 80%;
 	left: 10%;
 	height : 40px;
@@ -33,7 +34,7 @@ canvas {
 	background-color: lightblue;
 
 	transition: height 1s;
-	transition-delay : 0.5s;
+	transition-delay : 0.3s;
 }
 #infos_div:hover {
 	height: 300px;
@@ -42,6 +43,21 @@ canvas {
 #infos_div h4 {
 	margin-top: 10px;
 	text-align: center;
+}
+
+.hint {
+    border-radius: 5px;
+    background-color: orange;
+    background-image: url('../../assets/hint-sign.png');
+    background-size: 40px;
+    background-position-x: 10px;
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+}
+
+.hint p {
+    display: inline-block;
+    padding: 4px;
 }
 
 h4 span {
