@@ -1,4 +1,5 @@
 'use strict';
+/*global socket*/
 /*
 * @author : Benjamin
 */
@@ -8,6 +9,7 @@ define([], function() {
 		this.id = params.id || 0;
         this.players = params.players || [];
 
+        this.role = 'turret';
         this.reloadTime = 1000;
         this.canShoot = true;
 
@@ -16,8 +18,9 @@ define([], function() {
 
 	TurretController.prototype.addInputsListeners = function() {
         var that = this;
+        var player;
         window.addEventListener('keydown', this.keyControl = function(pEvent) {
-            var player = that.players[that.id];
+            player = that.players[that.id];
             var keyCodesToPrevent = [32, 37, 39];
             if(keyCodesToPrevent.indexOf(pEvent.keyCode) != -1) {
                 pEvent.preventDefault();
@@ -33,7 +36,12 @@ define([], function() {
                     that.canShoot = true;
                 }, that.reloadTime);
             }
+
+            
         });
+        setInterval(function() {
+            socket.emit('playerAction', that.players[that.id], that.role);
+        }, 200);
 	};
 
     TurretController.prototype.destroy = function () {

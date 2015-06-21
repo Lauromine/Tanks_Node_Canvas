@@ -2,7 +2,7 @@
 //Code client
 /*
 * 
-* @authors : Erwan, Benjamin
+* @authors : Benjamin
 */
 require.config({
     urlArgs: 'bust=' + (new Date()).getTime()
@@ -18,7 +18,8 @@ require(['game', 'player'], function(Game, Player) {
         player,
         players = [],
         shoots = [],
-        gameLoopTimeoutId;
+        gameLoopTimeoutId,
+        role;
 
     initStage();
     initWaiting();
@@ -26,7 +27,7 @@ require(['game', 'player'], function(Game, Player) {
     var Id;
     var timeout;
     
-    function waitServerRespond() {
+   /* function waitServerRespond() {
         var socket = io();
         socket.on('connexionOk', function(pId){
             Id = pId;
@@ -46,7 +47,7 @@ require(['game', 'player'], function(Game, Player) {
 
             initGame();
         });
-    }
+    }*/
     function initStage() {
         game = new Game({
             width  : 1024,
@@ -61,17 +62,25 @@ require(['game', 'player'], function(Game, Player) {
         const PLAYERS_MAX = 4;
         var playersToWait = 3;
 
-        //socket.on('');
-        socket.on('getRole', function(pRole) {
-            textLog.push({msg: 'You are in control of the ' + pRole, color : 'lightpurple'});
+        socket.on('getTankAndRole', function(pIdTank, pRole) {
+            //textLog.push({msg: 'You are in the ' + color + ' Tank'})
+            Id = pIdTank;
+            role = pRole;
+            console.log('myTankId '+ Id);
+            textLog.push({msg: 'You will control the ' + pRole, color : 'violet'});
         });
 
-        socket.on('tankAssigned', function(pIdTank) {
+        socket.on('startGame', function(pTanks)  {
+            textLog[0] = ({msg: 'The game will start in 3 seconds'});
 
-        });
 
-        socket.on('startGame', function()  {
-            textLog[0] = ({msg: 'The game will start in 3 seconds', color:''});
+            for(var i = 0; i < pTanks.length; i++) {
+                var tank = pTanks[i];
+                tank.playersArray = players;
+                tank.shootArray  = shoots;
+                players.push(new Player(tank));
+            }
+            console.log(players);
             setTimeout(initGame, 3000);
         });
 
@@ -81,9 +90,12 @@ require(['game', 'player'], function(Game, Player) {
             if(pErrorMessage) {
                 onRoomFull();
             } else {
-                textLog[0] = ({msg: 'Waiting ' + playersToWait +' other players ...'});
+                if(playersToWait < 0) {
+                    onRoomFull();
+                } else {
+                    textLog[0] = ({msg: 'Waiting ' + playersToWait +' other players ...'});
+                }  
             }
-            
         });
 
         socket.on('newPlayerJoin', function(pId) {
@@ -117,23 +129,7 @@ require(['game', 'player'], function(Game, Player) {
     function initGame() {
         clearTextLog();
         clearTimeout(gameLoopTimeoutId);
-
-        player = new Player({name: 'Cpt. Nugget', shootArray: shoots, playersArray: players, color : 'orange'});
-        players.push(player);
-        player.initController('turret', 0);
-
-        var player2 = new Player({
-            name: 'Sgt. Sausage', 
-            id:players.length, 
-            x: 500, 
-            rotation: 110, 
-            turretRotation: 70, 
-            shootArray: shoots, 
-            playersArray: players,
-            color: 'lightblue'
-        });
-
-        players.push(player2);
+        players[Id].initController(role, Id);
         gameLoop();
 
         //On créé un textLog de test
@@ -143,7 +139,16 @@ require(['game', 'player'], function(Game, Player) {
             else 
                 textLog.push({msg : 'String ' + i +' de test pour faire un sapin de noel coloré', color: 'red'});
         }
-        
+        socket.on('playersStatus', function(pTanks) {
+            for(var i = 0; i < pTanks.length; i++) {
+                var currentPlayer = players[i];
+
+                currentPlayer.x = pTanks.x;
+                currentPlayer.y = pTanks.y;
+                currentPlayer.rotation = pTanks.rotation;
+                currentPlayer.turretRotation = pTanks.turretRotation;
+            }
+        });
     }
 
     function gameLoop() {

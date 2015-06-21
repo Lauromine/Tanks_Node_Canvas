@@ -1,3 +1,8 @@
+body {
+    font-family: 'Arial';
+    background-image: url('../../assets/german_tank_wallpaper.jpeg');
+}
+
 h2 {
 	width : 100%;
 	display: inline-block;
@@ -17,6 +22,10 @@ canvas {
 	width: 80%;
 	left: 10%;
 	height : 40px;
+
+    padding-left: 5px;
+    padding-right: 5px;
+
 	overflow: hidden;
 	position : absolute;
 	margin-bottom: 4px;
@@ -33,4 +42,8 @@ canvas {
 #infos_div h4 {
 	margin-top: 10px;
 	text-align: center;
+}
+
+h4 span {
+  color: rgb(151,151,151);
 }

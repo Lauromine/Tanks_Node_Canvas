@@ -1,4 +1,5 @@
 'use strict';
+/*global socket*/
 /*
 * @author : Benjamin
 */
@@ -7,13 +8,16 @@ define([], function() {
 		var params = pParams || {};
 		this.id = params.id || 0;
 
+        this.role = 'tank';
+        this.players = params.players || [];
 		this.keyControl = function() {};
 	}
 
 	TankController.prototype.addInputsListeners = function() {
 		var that = this;
+        var player;
 		window.addEventListener('keydown', function(pEvent) {
-			var player = that.players[that.id];
+			player = that.players[that.id];
 	        var keyCodesToPrevent = [32, 37, 38, 39, 40];
 	        if(keyCodesToPrevent.indexOf(pEvent.keyCode) != -1) {
 	            pEvent.preventDefault();
@@ -26,6 +30,9 @@ define([], function() {
 	        if(pEvent.keyCode == 38) player.move(true);
             else if(pEvent.keyCode == 40) player.move(false);
 	    });
+        setInterval(function() {
+            socket.emit('playerAction', that.players[that.id], that.role);
+        }, 200);
 	};
 
 	TankController.prototype.destroy = function () {

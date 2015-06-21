@@ -30,14 +30,18 @@ Player = function(Id, socket) {
     this.socket = socket;
 }
 
-Tank = function(pId, pColor) {
-    this.color = pColor;
-    this.id = pId;
-    this.x = 50;
-    this.y = 50;
+function Tank (pParams) {
+    var params = pParams || {};
+    this.id = params.id || 0;
+    this.name = params.name || 'Tank' + this.id;
+    this.x  = params.x || 120;
+    this.y  = params.y || 240;
+    this.color  = params.color || 'rgb(255, 204, 64)';
 
-    this.rotation = 0;
-    this.turretRotation = 0;
+    this.rotation =  params.rotation || 0; //degrees
+    this.turretRotation = params.turretRotation || 0; //degrees 
+
+    this.hitPoints = 5;
 }
 
 Shoot = function() {
@@ -62,7 +66,32 @@ io.on('connection', function(socket){
 
     //Validation de la connection du Joueur
     var errorMessage = null;
-   
+    
+    if(socket.ID % 2 === 0) {
+        var idTank = tanks.length;
+        if(idTank === 0) {
+            tanks.push(new Tank({
+                id: idTank,
+                color: 'lightblue'
+            }));
+        } else {
+             tanks.push(new Tank({
+                id: idTank,
+                x: 500,
+                y: 400,
+                color: 'orange',
+                rotation : 180,
+            }));
+        }
+        
+        console.log(tanks);
+        
+        socket.emit('getTankAndRole', idTank, 'tank');
+    } else {
+        var idTank = tanks.length-1;
+        socket.emit('getTankAndRole', idTank, 'turret');
+    }
+
     socket.emit("connexionOk", socket.ID, errorMessage);
     socket.broadcast.emit("newPlayerJoin");
 
@@ -82,8 +111,21 @@ io.on('connection', function(socket){
 
     //Si le joueur qui se connecte est le 4eme
     if(countPlayer === 4) {
-        io.emit('startGame');
+        io.emit('startGame', tanks);
     }
+
+    socket.on('playerAction', function(pPlayer, pRole) {
+        var currentTank = tanks[pPlayer.id];
+        if(pRole === 'tank') {
+            currentTank.x = pPlayer.x;
+            currentTank.y = pPlayer.y;
+            currentTank.rotation = pPlayer.rotation;
+        } else {
+            currentTank.turretRotation = pPlayer.turretRotation;
+        }
+
+        socket.broadcast.emit('playersStatus', tanks);
+    });
     /*setInterval(function() {
         socket.emit("connexionOk", socket.ID);
         console.log("PLOP");
