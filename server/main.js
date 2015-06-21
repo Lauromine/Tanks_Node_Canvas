@@ -124,7 +124,7 @@ io.on('connection', function(socket){
             currentTank.turretRotation = pPlayer.turretRotation;
         }
 
-        socket.broadcast.emit('playersStatus', tanks);
+        socket.broadcast.emit('playerStatus', currentTank);
     });
     /*setInterval(function() {
         socket.emit("connexionOk", socket.ID);

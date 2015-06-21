@@ -59,7 +59,6 @@ require(['game', 'player'], function(Game, Player) {
         socket = io();
         textLog.push({msg : 'Waiting other players ..', color : 'lightblue'});
 
-        const PLAYERS_MAX = 4;
         var playersToWait = 3;
 
         socket.on('getTankAndRole', function(pIdTank, pRole) {
@@ -139,15 +138,12 @@ require(['game', 'player'], function(Game, Player) {
             else 
                 textLog.push({msg : 'String ' + i +' de test pour faire un sapin de noel coloré', color: 'red'});
         }
-        socket.on('playersStatus', function(pTanks) {
-            for(var i = 0; i < pTanks.length; i++) {
-                var currentPlayer = players[i];
-
-                currentPlayer.x = pTanks.x;
-                currentPlayer.y = pTanks.y;
-                currentPlayer.rotation = pTanks.rotation;
-                currentPlayer.turretRotation = pTanks.turretRotation;
-            }
+        socket.on('playerStatus', function(pTank) {
+            var currentPlayer = players[pTank.id];
+            currentPlayer.x = pTank.x;
+            currentPlayer.y = pTank.y;
+            currentPlayer.rotation = pTank.rotation;
+            currentPlayer.turretRotation = pTank.turretRotation;
         });
     }
 
@@ -197,7 +193,7 @@ require(['game', 'player'], function(Game, Player) {
         var nbMessagesDisplayed = params.nbDisplay || 5;
 
         ctx.fillStyle = 'rgba(201, 201, 201, 0.2)';
-        ctx.fillRect(540, 0, 400, 110);
+        ctx.fillRect(540, 0, 400, 125);
         ctx.font = fontSize+'px '+font;
         
         var textLogDisplayed = textLog.slice(textLog.length - nbMessagesDisplayed, textLog.length);
@@ -205,7 +201,7 @@ require(['game', 'player'], function(Game, Player) {
         for(var i = 0; i < textLogDisplayed.length; i++) {
             ctx.fillStyle = textLogDisplayed[i].color || 'white';
             ctx.font = textLogDisplayed[i].style || fontSize+'px '+font;
-            ctx.fillText(textLogDisplayed[i].msg, 550, 20 * i + fontSize);
+            ctx.fillText(textLogDisplayed[i].msg, 550, 20 * i + fontSize * 1.5);
         }
 
     }

@@ -37,11 +37,13 @@ define([], function() {
                 }, that.reloadTime);
             }
 
-            
+            var playerControlled = that.players[that.id];
+            var playerToSend = {
+                id: that.id,
+                turretRotation: playerControlled.turretRotation
+            }
+            socket.emit('playerAction', playerToSend, that.role);
         });
-        setInterval(function() {
-            socket.emit('playerAction', that.players[that.id], that.role);
-        }, 200);
 	};
 
     TurretController.prototype.destroy = function () {

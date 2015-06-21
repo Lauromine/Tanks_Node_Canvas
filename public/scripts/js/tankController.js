@@ -29,10 +29,16 @@ define([], function() {
 
 	        if(pEvent.keyCode == 38) player.move(true);
             else if(pEvent.keyCode == 40) player.move(false);
+
+            var playerControlled = that.players[that.id];
+            var playerToSend = {
+                id: that.id,
+                x: playerControlled.x,
+                y: playerControlled.y,
+                rotation: playerControlled.rotation
+            }
+            socket.emit('playerAction', playerToSend, that.role);
 	    });
-        setInterval(function() {
-            socket.emit('playerAction', that.players[that.id], that.role);
-        }, 200);
 	};
 
 	TankController.prototype.destroy = function () {
