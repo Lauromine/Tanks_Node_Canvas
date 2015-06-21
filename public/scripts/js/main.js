@@ -77,6 +77,9 @@ require(['game', 'player'], function(Game, Player) {
                 var lShoot = shoots[shootId];
                 var lPlayer = players[playerId];
 
+                //On teste pas la collision entre le joueur et son tir
+                if(lShoot.playerId === lPlayer.id) continue;
+
                 var distance = Math.sqrt(Math.pow((lShoot.x - lPlayer.x),2) + Math.sqrt((lShoot.y - lPlayer.y), 2));
                 if(distance < 50) {
                     console.log('Joueur ' + lShoot.playerId + ' a touché Joueur ' + playerId);
