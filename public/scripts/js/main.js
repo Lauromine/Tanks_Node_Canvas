@@ -11,14 +11,17 @@ require.config({
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var textLog = []; //Contient les messages affichés en jeu
+var socket;
 
 require(['game', 'player'], function(Game, Player) {
     var game,
         player,
         players = [],
-        shoots = [];
+        shoots = [],
+        gameLoopTimeoutId;
 
-    init();
+    initStage();
+    initWaiting();
 
     var Id;
     var timeout;
@@ -41,20 +44,95 @@ require(['game', 'player'], function(Game, Player) {
                 console.log('a player leave the server, his id is :' + IdLeaver);
             });
 
-            init();
+            initGame();
         });
     }
-
-    function init() {
+    function initStage() {
         game = new Game({
             width  : 1024,
             height : 768
         });
-        player = new Player({name: 'Pas le Murret', shootArray: shoots, playersArray: players});
+    }
+
+    function initWaiting() {
+        socket = io();
+        textLog.push({msg : 'Waiting other players ..', color : 'lightblue'});
+
+        const PLAYERS_MAX = 4;
+        var playersToWait = 3;
+
+        //socket.on('');
+        socket.on('getRole', function(pRole) {
+            textLog.push({msg: 'You are in control of the ' + pRole, color : 'lightpurple'});
+        });
+
+        socket.on('tankAssigned', function(pIdTank) {
+
+        });
+
+        socket.on('startGame', function()  {
+            textLog[0] = ({msg: 'The game will start in 3 seconds', color:''});
+            setTimeout(initGame, 3000);
+        });
+
+        socket.on('connexionOk', function(pId, pErrorMessage){
+            playersToWait = playersToWait - pId;
+
+            if(pErrorMessage) {
+                onRoomFull();
+            } else {
+                textLog[0] = ({msg: 'Waiting ' + playersToWait +' other players ...'});
+            }
+            
+        });
+
+        socket.on('newPlayerJoin', function(pId) {
+            playersToWait--;
+
+            if(playersToWait < -1) {
+                onRoomFull();
+            } else {
+                textLog[0] = ({msg: 'Waiting ' + playersToWait +' other players ...'});
+            }
+            
+        });
+
+        socket.on('allPlayersReady', function() {
+
+        });
+        waitLoop();
+    }
+
+    function onRoomFull() {
+        socket.removeAllListeners();
+        textLog[0] = ({msg: 'The room is full, please wait and reload the page', color : 'orange'});
+    }
+
+    function waitLoop() {
+        ctx.clearRect(0, 0, game.width, game.height);
+        displayTextLog({fontSize: 16});
+        gameLoopTimeoutId = setTimeout(waitLoop, 25);
+    }
+
+    function initGame() {
+        clearTextLog();
+        clearTimeout(gameLoopTimeoutId);
+
+        player = new Player({name: 'Cpt. Nugget', shootArray: shoots, playersArray: players, color : 'orange'});
         players.push(player);
         player.initController('turret', 0);
 
-        var player2 = new Player({name: 'Bill Murray', id:players.length, x: 500, rotation: 110, turretRotation: 70, shootArray: shoots, playersArray: players});
+        var player2 = new Player({
+            name: 'Sgt. Sausage', 
+            id:players.length, 
+            x: 500, 
+            rotation: 110, 
+            turretRotation: 70, 
+            shootArray: shoots, 
+            playersArray: players,
+            color: 'lightblue'
+        });
+
         players.push(player2);
         gameLoop();
 
@@ -113,15 +191,22 @@ require(['game', 'player'], function(Game, Player) {
         var font = params.font || 'Arial';
         var nbMessagesDisplayed = params.nbDisplay || 5;
 
+        ctx.fillStyle = 'rgba(201, 201, 201, 0.2)';
+        ctx.fillRect(540, 0, 400, 110);
         ctx.font = fontSize+'px '+font;
         
         var textLogDisplayed = textLog.slice(textLog.length - nbMessagesDisplayed, textLog.length);
 
         for(var i = 0; i < textLogDisplayed.length; i++) {
             ctx.fillStyle = textLogDisplayed[i].color || 'white';
-            ctx.fillText(textLogDisplayed[i].msg, 700, 20 * i + fontSize);
+            ctx.font = textLogDisplayed[i].style || fontSize+'px '+font;
+            ctx.fillText(textLogDisplayed[i].msg, 550, 20 * i + fontSize);
         }
 
+    }
+
+    function clearTextLog() {
+        textLog = [];
     }
    /* window.addEventListener('keydown', function(pEvent) {
         var keyCodesToPrevent = [32, 37, 38, 39, 40];
